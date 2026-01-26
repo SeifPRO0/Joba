@@ -1,43 +1,54 @@
-// كود الإرسال إلى Google Sheets
-const scriptURL = 'https://script.google.com/macros/s/AKfycbymuSuGUtdI5B97Xc3xbG6DBtzV1XRHL5T-eH905yDuSFzxUMrWGxDcgDxiS1ECjyus/exec'; // <--- حط اللينك بتاع جوجل هنا
+// 1. استيراد Firebase (ممكن تحطهم في آخر ملف الـ HTML)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+
+// 2. إعدادات المشروع (اللي نسختها من الخطوة رقم 4)
+const firebaseConfig = {
+    apiKey: "AIzaSyBBRGrnIr_ZeZjuQ0LDu4Kjfyn2YYVWFFk",
+    authDomain: "joba-9c289.firebaseapp.com",
+    projectId: "joba-9c289",
+    storageBucket: "joba-9c289.firebasestorage.app",
+    messagingSenderId: "1042717374258",
+    appId: "1:1042717374258:web:eb77191125685be26d892b",
+    measurementId: "G-JZ98LF6SCK"
+};
+
+// 3. تشغيل Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// 4. كود الإرسال
 const form = document.getElementById('contact-form');
 const btn = document.getElementById('submit-btn');
-const msg = document.getElementById('response-message');
 
-form.addEventListener('submit', e => {
-    e.preventDefault(); // بيمنع إعادة تحميل الصفحة
-
-    // تغيير حالة الزرار أثناء الإرسال
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
     btn.disabled = true;
-    btn.innerText = "جاري الإرسال...";
+    btn.innerText = "جاري الحفظ...";
 
-    // إرسال البيانات باستخدام Fetch API
-    fetch(scriptURL, { 
-        method: 'POST', 
-        body: new FormData(form)
-    })
-    .then(response => {
-        // في حالة النجاح
-        msg.innerText = "تم إرسال طلبك بنجاح! شكراً لك.";
-        msg.style.display = "block";
-        msg.style.color = "green";
-        
-        form.reset(); // مسح الخانات بعد الإرسال
+    // تجميع البيانات من الفورم
+    const formData = new FormData(form);
+    const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        message: formData.get('message'),
+        timestamp: new Date().toISOString()
+    };
+
+    // إرسال البيانات لجدول اسمه "orders"
+    const ordersRef = ref(db, 'orders');
+    push(ordersRef, data)
+    .then(() => {
+        alert("تم استلام طلبك في قاعدة البيانات بنجاح!");
+        form.reset();
         btn.disabled = false;
         btn.innerText = "إرسال";
-        
-        // إخفاء الرسالة بعد 5 ثواني
-        setTimeout(() => { msg.style.display = "none"; }, 5000);
     })
-    .catch(error => {
-        // في حالة وجود خطأ
-        console.error('Error!', error.message);
-        msg.innerText = "عذراً، حدث خطأ في الاتصال. حاول مرة أخرى.";
-        msg.style.display = "block";
-        msg.style.color = "red";
-        
+    .catch((error) => {
+        console.error("Error:", error);
         btn.disabled = false;
-        btn.innerText = "إرسال";
     });
 });
 
