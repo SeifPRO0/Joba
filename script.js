@@ -51,7 +51,7 @@ form.addEventListener('submit', (e) => {
         btn.disabled = false;
     });
 });
-
+form.addeventlistener('submit', (e) => { e.preventDefault(); 
 // كود الـ Smooth Scroll (عشان التنقل بين أقسام الموقع يكون ناعم)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -64,3 +64,4 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
