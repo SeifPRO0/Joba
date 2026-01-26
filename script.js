@@ -51,7 +51,14 @@ form.addEventListener('submit', (e) => {
         btn.disabled = false;
     });
 });
-form.addeventlistener('submit', (e) => { e.preventDefault(); 
+form.addEventListener('submit', (e) => {
+    e.preventDefault(); // تأكد إن السطر ده موجود ومكتوب صح
+    console.log("Form Clicked!"); // ضيف السطر ده عشان نتأكد في الـ Console إن الكود شغال
+    
+    // باقي كود Firebase...
+});
+
+                                        
 // كود الـ Smooth Scroll (عشان التنقل بين أقسام الموقع يكون ناعم)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -64,4 +71,5 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
 
